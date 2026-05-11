@@ -33,7 +33,6 @@ def clean_vtt(vtt_text):
 
 
 def get_video_data(video_url):
-    """Get the data of each single video and the summary of AI"""
     ydl_opts = {
         'skip_download': True,
         'writesubtitles': True,
@@ -48,31 +47,33 @@ def get_video_data(video_url):
             title = info.get('title', 'Unknown')
             subtitles = info.get('requested_subtitles')
 
-            if not subtitles:
-                print(f"   [AI] No subtitles, summarizing by title: {title}...")
+            full_text = ""
+            if subtitles:
+                en_key = next((k for k in subtitles.keys() if k.startswith('en')), None)
+                if en_key:
+                    sub_url = subtitles[en_key]['url']
+                    raw_vtt = requests.get(sub_url).text
+                    full_text = clean_vtt(raw_vtt)
+
+            if not full_text:
+                print(f"   [AI] No subtitles available, summarizing by title: {title}...")
                 prompt = f"Provide a brief overview and 3 potential core insights based on this video title.\nTitle: {title}"
             else:
+                print(f"   [AI] Summarizing with subtitles: {title}...")
                 prompt = f"Provide a theme and 3 core insights for this video.\nTitle: {title}\nContent: {full_text[:10000]}"
 
-            en_key = next((k for k in subtitles.keys() if k.startswith('en')), None)
-            sub_url = subtitles[en_key]['url']
-            raw_vtt = requests.get(sub_url).text
-            full_text = clean_vtt(raw_vtt)
-
-            print(f"   [AI] Summarizing: {title}...")
             response = client.chat.completions.create(
                 model=MODEL_NAME,
                 messages=[
-                    {"role": "system",
-                     "content": "You are a professional AI technology analyst. Summarize in English."},
-                    {"role": "user",
-                     "content": f"Provide a theme and 3 core insights for this video.\nTitle: {title}\nContent: {full_text[:10000]}"}
+                    {"role": "system", "content": "You are a professional AI technology analyst. Summarize in English."},
+                    {"role": "user", "content": prompt}
                 ]
             )
             summary = response.choices[0].message.content
             return title, summary
 
     except Exception as e:
+        print(f"   ❌ Error processing video: {e}")
         return "Error", str(e)
 
 
