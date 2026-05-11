@@ -49,7 +49,10 @@ def get_video_data(video_url):
             subtitles = info.get('requested_subtitles')
 
             if not subtitles:
-                return title, "No English subtitles found."
+                print(f"   [AI] No subtitles, summarizing by title: {title}...")
+                prompt = f"Provide a brief overview and 3 potential core insights based on this video title.\nTitle: {title}"
+            else:
+                prompt = f"Provide a theme and 3 core insights for this video.\nTitle: {title}\nContent: {full_text[:10000]}"
 
             en_key = next((k for k in subtitles.keys() if k.startswith('en')), None)
             sub_url = subtitles[en_key]['url']
