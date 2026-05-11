@@ -1,0 +1,35 @@
+name: Daily LLM Tracker Update
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          pip install yt-dlp openai pandas requests
+
+      - name: Run tracker script
+        env:
+          SILTCONFLOW_KEY: ${{ secrets.SILTCONFLOW_KEY }}
+        run: python main_app.py
+
+      - name: Commit and Push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add llm_tracker_database.csv
+          git commit -m "Auto-update: New video insights" || exit 0
+          git push
