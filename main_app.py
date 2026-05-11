@@ -6,7 +6,7 @@ import pandas as pd
 import requests
 
 # --- 1. Configure ---
-API_KEY = os.getenv("SILTCONFLOW_KEY")
+API_KEY = os.getenv("SILICONFLOW_KEY")
 BASE_URL = "https://api.siliconflow.cn/v1"
 MODEL_NAME = "deepseek-ai/DeepSeek-V3"
 client = OpenAI(api_key=API_KEY, base_url=BASE_URL)
