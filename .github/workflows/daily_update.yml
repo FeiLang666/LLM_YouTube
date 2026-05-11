@@ -21,7 +21,7 @@ jobs:
         run: |
           pip install yt-dlp openai pandas requests
 
-      - name: Run script
+      - name: Run tracker script
         env:
           SILICONFLOW_KEY: ${{ secrets.SILICONFLOW_KEY }}
         run: python main_app.py
