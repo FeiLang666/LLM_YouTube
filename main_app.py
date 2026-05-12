@@ -34,47 +34,47 @@ def clean_vtt(vtt_text):
 
 def get_video_data(video_url):
     ydl_opts = {
+        'format': 'best',
         'skip_download': True,
         'writesubtitles': True,
         'writeautomaticsub': True,
         'subtitleslangs': ['en.*'],
         'quiet': True,
+        'no_warnings': True,
     }
+
+    full_text = ""
+    v_title = "Unknown Title"
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info = ydl.extract_info(video_url, download=False)
-            title = info.get('title', 'Unknown')
-            subtitles = info.get('requested_subtitles')
+            try:
+                info = ydl.extract_info(video_url, download=False)
+                v_title = info.get('title', 'Unknown Title')
 
-            full_text = ""
-            if subtitles:
-                en_key = next((k for k in subtitles.keys() if k.startswith('en')), None)
-                if en_key:
-                    sub_url = subtitles[en_key]['url']
-                    raw_vtt = requests.get(sub_url).text
-                    full_text = clean_vtt(raw_vtt)
+                subtitles = info.get('requested_subtitles')
+                if subtitles and 'en' in subtitles:
+                    subtitle_url = subtitles['en']['url']
+                    response = requests.get(subtitle_url)
+                    if response.status_code == 200:
+                        full_text = clean_vtt(response.text)
+            except Exception as e:
+                print(f"   ⚠️ YouTube Blocked fetching for: {video_url}")
+                return "Video Restricted", "Summarization failed due to YouTube bot detection. Please check the URL manually."
 
-            if not full_text:
-                print(f"   [AI] No subtitles available, summarizing by title: {title}...")
-                prompt = f"Provide a brief overview and 3 potential core insights based on this video title.\nTitle: {title}"
-            else:
-                print(f"   [AI] Summarizing with subtitles: {title}...")
-                prompt = f"Provide a theme and 3 core insights for this video.\nTitle: {title}\nContent: {full_text[:10000]}"
+        if full_text:
+            prompt = f"Summarize this AI video transcript into 3 key points: {full_text[:3000]}"
+        else:
+            prompt = f"Based on the video title '{v_title}', predict the 3 most likely key discussion points about this AI topic."
 
-            response = client.chat.completions.create(
-                model=MODEL_NAME,
-                messages=[
-                    {"role": "system", "content": "You are a professional AI technology analyst. Summarize in English."},
-                    {"role": "user", "content": prompt}
-                ]
-            )
-            summary = response.choices[0].message.content
-            return title, summary
+        response = client.chat.completions.create(
+            model=MODEL_NAME,
+            messages=[{"role": "user", "content": prompt}]
+        )
+        return v_title, response.choices[0].message.content
 
     except Exception as e:
-        print(f"   ❌ Error processing video: {e}")
-        return "Error", str(e)
+        return "System Busy", "Temporary service interruption. Please try again later."
 
 
 # --- 3. Run main ---
