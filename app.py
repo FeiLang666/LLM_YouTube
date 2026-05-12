@@ -14,7 +14,7 @@ This dashboard tracks the latest videos from top LLM researchers and uses **Deep
 db_file = "llm_tracker_database.csv"
 
 if os.path.exists(db_file):
-    df = pd.read_csv(db_file, encoding="gbk")
+    df = pd.read_csv(db_file, encoding="utf-8-sig")
 
     # --- 2. 側邊欄篩選器 ---
     st.sidebar.header("Filters")
