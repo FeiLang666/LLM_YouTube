@@ -27,7 +27,7 @@ The system employs a decoupled architecture separating data ingestion, AI infere
 >
 >> **Note on Environment Differences:** The screenshot above shows the system successfully processing and summarizing videos in a local environment. While the core logic is fully functional, cloud-based execution (GitHub Actions) may occasionally face IP-based restrictions from YouTube's anti-bot system.
 
->![Workflow on GitHub Actions](./image/Successful workflow runs on GitHub.png)
+>![Workflow on GitHub Actions](./image/Successful%20workflow%20runs%20on%20GitHub.png)
 > 
 > Figure2: GitHub Actions Workflow
 
@@ -61,18 +61,18 @@ The system successfully maintains a growing database of AI technology trends.
 * **Robustness:** 100% success rate in generating summaries, even for videos with restricted subtitles, due to the implemented fallback mechanism.
 * **Efficiency:** Automated daily updates reduce manual tracking time by approximately 90% per week.
 
->![Web App Screenshot](./image/Streamlit Home page.png)
+>![Web App Screenshot](./image/Streamlit%20Home%20page.png)
 > 
 > >Figure5: Web App Screenshot
 > 
->![One details of a video](./image/One details of a video.png)
+>![One details of a video](./image/One%20details%20of%20a%20video.png)
 > 
 > >Figure6: One details of a video
 > 
->![Search page filtered by channels.png](./image/Search page filtered by channels.png)
+>![Search page filtered by channels.png](./image/Search%20page%20filtered%20by%20channels.png)
 > 
 > >Figure7: Search page filtered by channels
 > 
->![Search page filtered by keywords.png](./image/Search page filtered by keys.png)
+>![Search page filtered by keywords.png](./image/Search%20page%20filtered%20by%20keys.png)
 > 
 > >Figure8: Search page filtered by keywords
